@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes e Séries Complexos</title>
+
+    <!-- CSS da página -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        header {
+            background-color: #e50914;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #ffffff;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 15px;
+        }
+
+        nav a {
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin: 0 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            margin: 15px 0;
+        }
+
+        .card button {
+            padding: 10px 15px;
+            background-color: #e50914;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #ff1e1e;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #333;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            color: #fff;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination button {
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #e50914;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination button:hover {
+            background-color: #ff1e1e;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header>
+        <h1>Filmes e Séries Populares</h1>
+    </header>
+
+    <!-- Navegação -->
+    <nav>
+        <a href="#" onclick="loadPage('home')">Início</a>
+        <a href="#" onclick="loadPage('filmes')">Filmes</a>
+        <a href="#" onclick="loadPage('series')">Séries</a>
+    </nav>
+
+    <!-- Container de conteúdo -->
+    <div class="container" id="content">
+        <!-- Conteúdo será carregado aqui -->
+    </div>
+
+    <!-- Modal de detalhes -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+
+    <!-- Script JavaScript -->
+    <script>
+        // Dados de exemplo de filmes e séries
+        const filmes = [
+            { titulo: 'O Rei Leão', descricao: 'Simba, um jovem leão, deve assumir seu lugar como rei das terras do reino.', img: 'https://example.com/lionking.jpg' },
+            { titulo: 'Vingadores: Ultimato', descricao: 'Os Vingadores precisam enfrentar Thanos para salvar o universo.', img: 'https://example.com/avengers.jpg' },
+            { titulo: 'Interstellar', descricao: 'Exploradores espaciais viajam por um buraco de minhoca em busca de um novo lar para a humanidade.', img: 'https://example.com/interstellar.jpg' },
+            // ... (adicione mais filmes)
+            { titulo:'como treinar o seu dragao',descricao:'soluço enfrenta seu maior medo', img:''}
+        ];
+        const series = [
+            { titulo: 'Breaking Bad', descricao: 'Um professor de química se torna fabricante de metanfetamina após ser diagnosticado com câncer.', img: 'https://example.com/breakingbad.jpg' },
+            { titulo: 'Stranger Things', descricao: 'Um grupo de crianças enfrenta fenômenos sobrenaturais em sua pequena cidade.', img: 'https://example.com/strangerthings.jpg' },
+            { titulo: 'The Mandalorian', descricao: 'Um caçador de recompensas viaja pela galáxia após a queda do Império.', img: 'https://example.com/mandalorian.jpg' },
+            // ... (adicione mais séries)
+        ];
+
+        let currentPage = 'home';
+
+        // Função para carregar a página correta
+        function loadPage(page) {
+            currentPage = page;
+            const content = document.getElementById('content');
+
+            if (page === 'home') {
+                content.innerHTML = '<h2>Bem-vindo ao Mundo dos Filmes e Séries</h2><p>Selecione uma categoria acima para começar!</p>';
+            } else if (page === 'filmes') {
+                displayItems(filmes, 'Filmes');
+            } else if (page === 'series') {
+                displayItems(series, 'Séries');
+            }
+        }
+
+        // Função para exibir filmes ou séries em uma grid
+        function displayItems(items, type) {
+            const content = document.getElementById('content');
+            let html = `<h2>${type}</h2><div class="grid">`;
+
+            items.forEach((item, index) => {
+                html += `
+                    <div class="card">
+                        <img src="${item.img}" alt="${item.titulo}">
+                        <h3>${item.titulo}</h3>
+                        <button onclick="openModal('${item.titulo}', '${item.descricao}')">Ver detalhes</button>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        // Função para abrir o modal com detalhes
+        function openModal(titulo, descricao) {
+            document.getElementById('modalTitle').innerText = titulo;
+            document.getElementById('modalDescription').innerText = descricao;
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Função para fechar o modal
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Inicializa a página inicial
+        loadPage('home');
+    </script>
+</body>
+</html>
